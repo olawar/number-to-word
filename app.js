@@ -21,7 +21,7 @@ var app = {
             e.preventDefault();
             // sprawdzamy czy wartosc inputa faktycznie jest liczbą
             if (!$.isNumeric($('[data-number]').val())) {
-                $('[data-alert]').css('color', 'red').text('tysiąc pięcset sto dziewiecset');
+            $('[data-alert]').css('color', 'red').text('tysiąc pięćset sto dziewięćset');
             }
             // jesli jest odpalamy metode zamiany w tekst
             else {
