@@ -1,0 +1,42 @@
+body {
+  font-size: 20px;
+  font-family: 'Tahoma', sans-serif;
+}
+
+#number-reader {
+  margin: auto;
+  padding: 60px 40px;
+  border: 1px solid #003359;
+  background-color: #003359;
+  border-radius: 30px;
+  text-align: center;
+  color: white;
+  max-width: 60%;
+  min-height: 240px;
+}
+
+label {
+  display: block;
+  margin-bottom: 20px;
+}
+
+input {
+  font-size: 20px;
+  padding: 8px;
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: none;
+  background-color: #005EA6;
+  color: white;
+  padding: 20px;
+  font-size: 16px;
+}
+
+p {
+  font-size: 24px;
+}
