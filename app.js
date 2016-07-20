@@ -7,7 +7,8 @@ var values = {
 ones: ['', 'jeden', 'dwa', 'trzy', 'cztery', 'pięć', 'sześć', 'siedem', 'osiem', 'dziewięć', 'dziesięć', 'jedenaście', 'dwanaście', 'trzynaście', 'czternaście', 'pietnaście', 'szesnaście', 'siedemnaście', 'osiemnaście','dziewiętnaście'],
 tens: ['', '', 'dwadzieścia', 'trzydzieści', 'czterdzieści', 'pięćdziesiąt', 'sześćdziesiąt', 'siedemdziesiąt', 'osiemdziesiąt', 'dziewięćdziesiąt'],
 hundreds: ['', 'sto', 'dwieście', 'trzysta', 'czterysta', 'pięćset', 'sześćset', 'siedemset', 'osiemset', 'dziewięćset'],
-sufixes: [ ['', '', ''], ['tysiąc', 'tysiące', 'tysięcy'], ['milion', 'miliony', 'milionów'], ['miliard', 'miliardy', 'miliardów'], ['bilion', 'biliony', 'bilionów']  ]
+sufixes: [ ['', '', ''], ['tysiąc', 'tysiące', 'tysięcy'], ['milion', 'miliony', 'milionów'], ['miliard', 'miliardy', 'miliardów'], ['bilion', 'biliony', 'bilionów']  ],
+currency: [ ['złoty', 'złote', 'złotych'], ['grosz', 'grosze', 'groszy']]
 }
 
 var app = {
@@ -21,33 +22,55 @@ var app = {
         $('form').on('submit', function(e){
             e.preventDefault();
 
-            var inputArray = $('[data-number]').val().split(",");
+            var inputArray = $('[data-number]').val().split(/[.,]/);
 
             // sprawdzamy czy wartosc inputa faktycznie jest pozadana liczbą
             if (! numberPattern.test($('[data-number]').val()))  {
-              $('[data-alert]').css('color', 'red').text('tysiąc pięćset sto dziewięćset (czyli wpisz liczbę opcjonalnie z maksymalnie dwoma cyframi po przecinku)');
+              $('[data-alert]').css('color', 'red').text('tysiąc pięćset sto dziewięćset (czyli wpisz liczbę opcjonalnie z maksymalnie dwoma cyframi po przecinku lub kropce)');
 
             // jesli jest to konwertujemy ja na slowa - cene
             } else {
-              var resultText = [];
-
-
-              if (inputArray[1] !== undefined) {
-                  // jesli jest tylko jedna liczba po przecinku to musimy ja przeksztalcic na x * 10
-                  if (inputArray[1].length < 2) {
-                    inputArray[1] = 10 * parseInt(inputArray[1], 10);
-                  }
-                  resultText.push(that.numberToWord(parseInt(inputArray[0], 10)), "złotych", that.numberToWord(parseInt(inputArray[1], 10)), "groszy");
-              } else {
-                resultText.push(that.numberToWord(parseInt(inputArray[0], 10)), "złotych");
-              }
-              $('[data-alert]').css('color', 'white').text(resultText.join(" "));
+              $('[data-alert]').css('color', 'white').text(that.priceConverter(inputArray));
             }
 
         });
     },
 
-    // metoda zamiany liczby w tekst
+    // dodanie warstwy cenowej
+    priceConverter: function(numberArray) {
+        var that = this,
+            resultText = [];
+
+        if (numberArray[1] !== undefined) {
+            // jesli jest tylko jedna liczba po przecinku to musimy ja przeksztalcic na x * 10
+            if (numberArray[1].length < 2) {
+              numberArray[1] = 10 * parseInt(numberArray[1], 10);
+            }
+            resultText.push(that.numberToWord(parseInt(numberArray[0], 10)), chooseCurrency(parseInt(numberArray[0], 10), 0), that.numberToWord(parseInt(numberArray[1], 10)), chooseCurrency(parseInt(numberArray[1], 10), 1));
+        } else {
+          resultText.push(that.numberToWord(parseInt(numberArray[0], 10)), chooseCurrency(parseInt(numberArray[0], 10), 0));
+        }
+        return resultText.join(" ");
+
+        // dobieranie odpowiedniej odmiany
+        function chooseCurrency(number, currencyIndex) {
+          var string = number.toString(),
+              currencyChosen = [];
+
+          if (number === 1) {
+            currencyChosen.push(values.currency[currencyIndex][0]);
+          }
+          else if (parseInt(string.charAt(string.length - 1)) > 1 && parseInt(string.charAt(string.length - 1)) < 5) {
+            currencyChosen.push(values.currency[currencyIndex][1]);
+          } else {
+            currencyChosen.push(values.currency[currencyIndex][2]);
+          }
+          return currencyChosen;
+        }
+
+    },
+
+    // metoda zamiany liczby w tekst (tylko!)
     numberToWord: function(number) {
         var sayWords = [],
             stringNumber = number.toString(),
@@ -91,7 +114,6 @@ var app = {
                     }
                 }
             }
-
         return sayWords.join(" ");
     }
 };
