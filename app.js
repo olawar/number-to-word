@@ -56,8 +56,12 @@ var app = {
                 if (tempTens === 1) {
                     tempOnes += 10;
                 }
+                // obsługa wyjątkow
                 if ((arrayNumber[i] !== "001") || number === 1) {
                     sayWords.push(values.ones[tempOnes]);
+                }
+                if (number === 0) {
+                    sayWords.push('zero');
                 }
                 // dodawanie sufiksow od tysiaca wzwyz
                 if (arrayNumber[i] !== "000") {
