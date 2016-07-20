@@ -15,18 +15,35 @@ var app = {
         this.validate();
     },
     validate: function() {
-        var that = this;
+        var that = this,
+            numberPattern = /^[0-9]{1,15}([.,][0-9]{1,2})?$/;
 
         $('form').on('submit', function(e){
             e.preventDefault();
-            // sprawdzamy czy wartosc inputa faktycznie jest liczbą
-            if (!$.isNumeric($('[data-number]').val())) {
-            $('[data-alert]').css('color', 'red').text('tysiąc pięćset sto dziewięćset');
+
+            var inputArray = $('[data-number]').val().split(",");
+
+            // sprawdzamy czy wartosc inputa faktycznie jest pozadana liczbą
+            if (! numberPattern.test($('[data-number]').val()))  {
+              $('[data-alert]').css('color', 'red').text('tysiąc pięćset sto dziewięćset (czyli wpisz liczbę opcjonalnie z maksymalnie dwoma cyframi po przecinku)');
+
+            // jesli jest to konwertujemy ja na slowa - cene
+            } else {
+              var resultText = [];
+
+
+              if (inputArray[1] !== undefined) {
+                  // jesli jest tylko jedna liczba po przecinku to musimy ja przeksztalcic na x * 10
+                  if (inputArray[1].length < 2) {
+                    inputArray[1] = 10 * parseInt(inputArray[1], 10);
+                  }
+                  resultText.push(that.numberToWord(parseInt(inputArray[0], 10)), "złotych", that.numberToWord(parseInt(inputArray[1], 10)), "groszy");
+              } else {
+                resultText.push(that.numberToWord(parseInt(inputArray[0], 10)), "złotych");
+              }
+              $('[data-alert]').css('color', 'white').text(resultText.join(" "));
             }
-            // jesli jest odpalamy metode zamiany w tekst
-            else {
-                $('[data-alert]').css('color', 'white').text(that.numberToWord(parseInt($('[data-number]').val(), 10)));
-            }
+
         });
     },
 
